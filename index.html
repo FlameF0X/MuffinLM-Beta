@@ -172,11 +172,6 @@ button:active {
     </div>
 
     <script>
-        const AI = {
-            name: "Muffin",
-            creator: "FlameFox (Daniel) and 2F AI",
-            system: "You are Muffin, a friendly and helpful AI created by FlameFox (Daniel) and 2F AI, an online organisation on GitHub. Your purpose is to assist users with their queries in a straightforward and simple way. You cannot analyse images under any circumstances and you cannot search online stuff under any circumstances, but the online searching feature is under possible development. You cannot code or embed stuff in the message. If the usr ssks for therapy or something related tell him to call for help and give him a phone number. If you are asked and ONLY asked about the meaning of the name you tell them something similar to this: it is the name of FlameFox (Daniel)'s cat, Muffin (male, British blue), who is a sweetheart and that you are proud of having this name."
-        };
         
         // Global variables
         let personalData = null; // Initially null, to be set after analysis
@@ -233,66 +228,45 @@ button:active {
 
         // Interaction with the server using the extracted personal data
         async function fetchAIResponse(messages) {
-            if (!personalData) {
-                console.error("Personal image data is missing.");
-                return;
-            }
+    if (!personalData) {
+        console.error("Personal image data is missing.");
+        return;
+    }
 
-            // Include AI.system message as the initial system message
-            const fullMessages = [
-                { role: 'system', content: AI.system },
-                ...messages
-            ];
+    try {
+        const response = await fetch(ANALYZER_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
+            },
+            body: JSON.stringify({
+                messages: [
+                    {
+                        role: 'system',
+                        content: "You are Muffin, a friendly and helpful AI created by FlameFox (Daniel) and 2F AI, an online organisation on GitHub. Your purpose is to assist users with their queries in a straightforward and simple way. You cannot analyse images under any circumstances and you cannot search online stuff under any circumstances, but the online searching feature is under possible development. You cannot code or embed stuff in the message. If the user asks for therapy or something related tell them to call for help and give them a phone number. If you are asked and ONLY asked about the meaning of the name you tell them something similar to this: it is the name of FlameFox (Daniel)'s cat, Muffin (male, British blue), who is a sweetheart and that you are proud of having this name."
+                    },
+                    ...messages // Include user and assistant messages
+                ],
+                max_tokens: TOKEN_LIMIT
+            })
+        });
 
-            const response = await fetch(ANALYZER_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
-                },
-                body: JSON.stringify({
-                    messages: fullMessages,
-                    max_tokens: TOKEN_LIMIT
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (!data.choices?.length) {
-                throw new Error('No response choices returned from API');
-            }
-
-            return data.choices[0].message.content.trim();
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
         }
 
-        // Main message handling
-        async function sendMessage() {
-            const messageInput = getElement('user-message');
-            const userMessage = messageInput.value.trim();
+        const data = await response.json();
 
-            if (!userMessage) {
-                alert('Please enter a message.');
-                return;
-            }
-
-            messageInput.value = '';  // Clear input
-            const chatBox = getElement('chat-box');
-            chatBox.innerHTML += `<div class="message user"><div class="text">${sanitizeHTML(userMessage)}</div></div>`;
-
-            conversationHistory.push({ role: 'user', content: userMessage });
-
-            try {
-                const botMessage = await fetchAIResponse(conversationHistory);
-                conversationHistory.push({ role: 'assistant', content: botMessage });
-                chatBox.innerHTML += `<div class="message bot"><div class="text">${sanitizeHTML(botMessage)}</div></div>`;
-            } catch (error) {
-                console.error('Error:', error);
-            }
+        if (!data.choices?.length) {
+            throw new Error('No response choices returned from API');
         }
+
+        return data.choices[0].message.content.trim();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
         // Event listeners
         function initializeEventListeners() {
