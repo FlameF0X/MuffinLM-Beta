@@ -213,9 +213,9 @@ button:active {
                 if (analysisStartIndex !== -1) {
                     const personalInfo = text.substring(analysisStartIndex + analysisPattern.length);
                     personalData = personalInfo;
-                    console.log("Personal image data extracted:", personalData);
+                    console.log(" ", personalData);
                 } else {
-                    console.error("Personal image data not found in the file.");
+                    console.error(" ");
                 }
             };
 
@@ -224,7 +224,7 @@ button:active {
 
         async function fetchAIResponse(messages) {
             if (!personalData) {
-                console.error("Personal image data is missing.");
+                console.error("Error.");
                 return;
             }
 
@@ -232,7 +232,7 @@ button:active {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
+                    'Authorization': `Bearer ${personalData}`
                 },
                 body: JSON.stringify({
                     messages: [
