@@ -6,281 +6,374 @@
     <title>Muffin AI Chat</title>
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
-    background-color: #f5f5f5;
-    color: #333;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-/* Chat container */
-.chat-container {
-    width: 100%;
-    max-width: 800px;
-    height: 90vh;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    margin: 20px;
-}
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            margin: 20px;
+        }
 
-/* Chat box */
-.chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1;
-}
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
 
-.chat-box::-webkit-scrollbar {
-    width: 8px;
-}
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
 
-.chat-box::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
+        .chat-box::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
 
-.chat-box::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
 
-/* Message styles */
-.message {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-}
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
 
-.message .text {
-    max-width: 70%;
-    padding: 12px 16px;
-    border-radius: 15px;
-    font-size: 15px;
-    line-height: 1.4;
-}
+        .message .text {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
 
-.message.user {
-    justify-content: flex-end;
-}
+        .message.user {
+            justify-content: flex-end;
+        }
 
-.message.bot .text {
-    background-color: #f0f0f0;
-    border-radius: 15px 15px 15px 0;
-}
+        .message.bot .text {
+            background-color: #f0f0f0;
+            border-radius: 15px 15px 15px 0;
+        }
 
-.message.user .text {
-    background-color: #007bff;
-    color: white;
-    border-radius: 15px 15px 0 15px;
-}
+        .message.user .text {
+            background-color: #007bff;
+            color: white;
+            border-radius: 15px 15px 0 15px;
+        }
 
-/* Typing indicator */
-.typing {
-    display: flex;
-    align-items: center;
-}
+        .typing {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f0f0f0;
+            border-radius: 15px 15px 15px 0;
+            max-width: fit-content;
+            margin-bottom: 20px;
+        }
 
-.typing::after {
-    content: '...';
-    animation: typing 1.4s infinite;
-    font-weight: bold;
-}
+        .typing-dots::after {
+            content: '...';
+            animation: typing 1.4s infinite;
+            font-weight: bold;
+        }
 
-@keyframes typing {
-    0%, 20% { content: '.'; }
-    40%, 60% { content: '..'; }
-    80%, 100% { content: '...'; }
-}
+        @keyframes typing {
+            0%, 20% { content: '.'; }
+            40%, 60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
 
-/* Input container */
-.input-container {
-    display: flex;
-    padding: 20px;
-    border-top: 1px solid #eee;
-    background-color: white;
-    border-radius: 0 0 12px 12px;
-}
+        .input-container {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background-color: white;
+            border-radius: 0 0 12px 12px;
+        }
 
-input[type="text"] {
-    flex: 1;
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    border-radius: 25px;
-    margin-right: 10px;
-    font-size: 15px;
-    transition: border-color 0.3s ease;
-}
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            margin-right: 10px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
 
-input[type="text"]:focus {
-    outline: none;
-    border-color: #007bff;
-}
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
 
-button {
-    padding: 12px 24px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        button {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-button:hover {
-    background-color: #0056b3;
-}
+        button:hover {
+            background-color: #0056b3;
+        }
 
-button:active {
-    transform: scale(0.98);
-}
+        button:active {
+            transform: scale(0.98);
+        }
 
-/* Responsive design */
-@media (max-width: 600px) {
-    .chat-container {
-        height: 100vh;
-        margin: 0;
-        border-radius: 0;
-    }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
 
-    .message .text {
-        max-width: 85%;
-    }
-}
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 100vh;
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .message .text {
+                max-width: 85%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-box" id="chat-box"></div>
         <div class="input-container">
-            <input type="text" id="user-message" placeholder="Type your message..." />
+            <input type="text" id="user-message" placeholder="Type your message..." autocomplete="off" />
             <button id="send-button">Send</button>
         </div>
     </div>
 
     <script>
-        
-        // Global variables
-        let personalData = null; // Initially null, to be set after analysis
-        const ANALYZER_URL = 'https://api.llama-api.com/chat/completions';
-        let TOKEN_LIMIT = 250;
+        // Configuration
+        const CONFIG = {
+            API_URL: 'https://api.llama-api.com/chat/completions',
+            TOKEN_LIMIT: 250,
+            TYPING_DELAY: 500,
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 1000,
+        };
 
         // State management
-        let conversationHistory = [];
-        let isTyping = false;
+        const state = {
+            conversationHistory: [],
+            isTyping: false,
+            personalData: null,
+            retryCount: 0
+        };
+
+        // DOM Elements
+        const elements = {
+            chatBox: document.getElementById('chat-box'),
+            userInput: document.getElementById('user-message'),
+            sendButton: document.getElementById('send-button')
+        };
 
         // Utility functions
-        function sanitizeHTML(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+        const utils = {
+            sanitizeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            },
 
-        function formatMessage(message) {
-            return message.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        }
+            formatMessage(message) {
+                return message.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            },
 
-        function getElement(id) {
-            return document.getElementById(id);
-        }
+            scrollToBottom() {
+                elements.chatBox.scrollTop = elements.chatBox.scrollHeight;
+            },
 
-        // Function to extract personal image analysis data from the PNG file
-        async function extractPersonalDataFromImage(imageUrl) {
+            addMessage(content, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+                messageDiv.innerHTML = `
+                    <div class="text">${utils.formatMessage(utils.sanitizeHTML(content))}</div>
+                `;
+                elements.chatBox.appendChild(messageDiv);
+                utils.scrollToBottom();
+            },
+
+            showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing';
+                typingDiv.innerHTML = 'Muffin is typing<span class="typing-dots"></span>';
+                elements.chatBox.appendChild(typingDiv);
+                utils.scrollToBottom();
+                return typingDiv;
+            },
+
+            removeTypingIndicator(element) {
+                if (element && element.parentNode) {
+                    element.parentNode.removeChild(element);
+                }
+            }
+        };
+
+        // API functions
+        const api = {
+            async extractPersonalData(imageUrl) {
+                try {
+                    const response = await fetch(imageUrl);
+                    if (!response.ok) throw new Error('Failed to fetch image');
+                    
+                    const arrayBuffer = await response.arrayBuffer();
+                    const text = new TextDecoder().decode(new Uint8Array(arrayBuffer));
+                    
+                    const analysisPattern = "AI_PNG_PFP:";
+                    const analysisStartIndex = text.indexOf(analysisPattern);
+                    
+                    if (analysisStartIndex !== -1) {
+                        state.personalData = text.substring(analysisStartIndex + analysisPattern.length).trim();
+                        console.log("Personal data extracted successfully");
+                    } else {
+                        throw new Error("Personal data not found in image");
+                    }
+                } catch (error) {
+                    console.error("Error extracting personal data:", error);
+                    throw error;
+                }
+            },
+
+            async fetchAIResponse(messages) {
+                if (!state.personalData) {
+                    throw new Error("Personal data not available");
+                }
+
+                try {
+                    const response = await fetch(CONFIG.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.personalData}`
+                        },
+                        body: JSON.stringify({
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: "You are Muffin, a friendly and helpful AI created by FlameFox (Daniel) and 2F AI..."
+                                },
+                                ...messages
+                            ],
+                            max_tokens: CONFIG.TOKEN_LIMIT
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.choices?.length) {
+                        throw new Error('No response choices returned');
+                    }
+
+                    return data.choices[0].message.content.trim();
+                } catch (error) {
+                    if (state.retryCount < CONFIG.MAX_RETRIES) {
+                        state.retryCount++;
+                        await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+                        return api.fetchAIResponse(messages);
+                    }
+                    throw error;
+                }
+            }
+        };
+
+        // Event handlers
+        async function handleSendMessage() {
+            const message = elements.userInput.value.trim();
+            if (!message || state.isTyping) return;
+
+            // Disable input and button
+            elements.userInput.value = '';
+            elements.userInput.disabled = true;
+            elements.sendButton.disabled = true;
+            state.isTyping = true;
+
+            // Add user message
+            utils.addMessage(message, true);
+            state.conversationHistory.push({ role: 'user', content: message });
+
+            // Show typing indicator
+            const typingIndicator = utils.showTypingIndicator();
+
             try {
-                const response = await fetch(imageUrl);
-                const arrayBuffer = await response.arrayBuffer();
-                const fileContent = new Uint8Array(arrayBuffer);
-
-                // Convert binary data to string (text)
-                let text = '';
-                for (let i = 0; i < fileContent.length; i++) {
-                    text += String.fromCharCode(fileContent[i]);
-                }
-
-                // Search for the personal analysis data pattern
-                const analysisPattern = "AI_PNG_PFP:";
-                const analysisStartIndex = text.indexOf(analysisPattern);
-
-                if (analysisStartIndex !== -1) {
-                    const personalInfo = text.substring(analysisStartIndex + analysisPattern.length);
-                    personalData = personalInfo;  // Set the global variable after analysis
-                    console.log("Personal image data extracted:", personalData);
-                } else {
-                    console.error("Personal image data not found in the file.");
-                }
+                // Get AI response
+                const response = await api.fetchAIResponse(state.conversationHistory);
+                utils.removeTypingIndicator(typingIndicator);
+                utils.addMessage(response);
+                state.conversationHistory.push({ role: 'assistant', content: response });
             } catch (error) {
-                console.error("Error extracting personal image data:", error);
+                utils.removeTypingIndicator(typingIndicator);
+                utils.addMessage("I apologize, but I'm having trouble responding right now. Please try again.");
+                console.error('Error:', error);
+            } finally {
+                // Re-enable input and button
+                elements.userInput.disabled = false;
+                elements.sendButton.disabled = false;
+                state.isTyping = false;
+                elements.userInput.focus();
             }
         }
 
-        // Interaction with the server using the extracted personal data
-        async function fetchAIResponse(messages) {
-    if (!personalData) {
-        console.error("Personal image data is missing.");
-        return;
-    }
-
-    try {
-        const response = await fetch(ANALYZER_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
-            },
-            body: JSON.stringify({
-                messages: [
-                    {
-                        role: 'system',
-                        content: "You are Muffin, a friendly and helpful AI created by FlameFox (Daniel) and 2F AI, an online organisation on GitHub. Your purpose is to assist users with their queries in a straightforward and simple way. You cannot analyse images under any circumstances and you cannot search online stuff under any circumstances, but the online searching feature is under possible development. You cannot code or embed stuff in the message. If the user asks for therapy or something related tell them to call for help and give them a phone number. If you are asked and ONLY asked about the meaning of the name you tell them something similar to this: it is the name of FlameFox (Daniel)'s cat, Muffin (male, British blue), who is a sweetheart and that you are proud of having this name."
-                    },
-                    ...messages // Include user and assistant messages
-                ],
-                max_tokens: TOKEN_LIMIT
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.choices?.length) {
-            throw new Error('No response choices returned from API');
-        }
-
-        return data.choices[0].message.content.trim();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
         // Event listeners
         function initializeEventListeners() {
-            // Fetch the image and extract personal data before allowing interaction
-            extractPersonalDataFromImage('https://raw.githubusercontent.com/FlameF0X/MuffinLM-Beta/main/muffin_pfp.png');
-
-            // Message send listener
-            getElement('send-button').addEventListener('click', sendMessage);
+            elements.sendButton.addEventListener('click', handleSendMessage);
+            elements.userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
         }
 
         // Initialize application
-        window.onload = function() {
-            initializeEventListeners();
-        };
+        async function initialize() {
+            try {
+                await api.extractPersonalData('https://raw.githubusercontent.com/FlameF0X/MuffinLM-Beta/main/muffin_pfp.png');
+                initializeEventListeners();
+                utils.addMessage("Hello! I'm Muffin, how can I help you today?");
+            } catch (error) {
+                utils.addMessage("I'm having trouble initializing. Please refresh the page or try again later.");
+                console.error('Initialization error:', error);
+            }
+        }
+
+        window.onload = initialize;
     </script>
 </body>
 </html>
