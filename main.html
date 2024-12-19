@@ -174,7 +174,7 @@ button:active {
 
     <script>
         // Global variables
-        let personalData = null;
+        let personalData = null; // Initially null, to be set after analysis
         const ANALYZER_URL = 'https://api.llama-api.com/chat/completions';
         let TOKEN_LIMIT = 250;
 
@@ -197,34 +197,39 @@ button:active {
             return document.getElementById(id);
         }
 
-        function extractPersonalDataFromFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const fileContent = new Uint8Array(event.target.result);
+        // Function to extract personal image analysis data from the PNG file
+        async function extractPersonalDataFromImage(imageUrl) {
+            try {
+                const response = await fetch(imageUrl);
+                const arrayBuffer = await response.arrayBuffer();
+                const fileContent = new Uint8Array(arrayBuffer);
 
+                // Convert binary data to string (text)
                 let text = '';
                 for (let i = 0; i < fileContent.length; i++) {
                     text += String.fromCharCode(fileContent[i]);
                 }
 
+                // Search for the personal analysis data pattern
                 const analysisPattern = "AI_PNG_PFP:";
                 const analysisStartIndex = text.indexOf(analysisPattern);
 
                 if (analysisStartIndex !== -1) {
                     const personalInfo = text.substring(analysisStartIndex + analysisPattern.length);
-                    personalData = personalInfo;
-                    console.log(" ", personalData);
+                    personalData = personalInfo;  // Set the global variable after analysis
+                    console.log("Personal image data extracted:", personalData);
                 } else {
-                    console.error(" ");
+                    console.error("Personal image data not found in the file.");
                 }
-            };
-
-            reader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error("Error extracting personal image data:", error);
+            }
         }
 
+        // Interaction with the server using the extracted personal data
         async function fetchAIResponse(messages) {
             if (!personalData) {
-                console.error("Error.");
+                console.error("Personal image data is missing.");
                 return;
             }
 
@@ -232,7 +237,7 @@ button:active {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${personalData}`
+                    'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
                 },
                 body: JSON.stringify({
                     messages: [
@@ -283,13 +288,8 @@ button:active {
 
         // Event listeners
         function initializeEventListeners() {
-            // File upload listener
-            getElement('file-upload').addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    extractPersonalDataFromFile(file);  // Perform personal image analysis when file is uploaded
-                }
-            });
+            // Fetch the image and extract personal data before allowing interaction
+            extractPersonalDataFromImage('https://raw.githubusercontent.com/FlameF0X/MuffinLM-Beta/main/muffin_pfp.png');
 
             // Message send listener
             getElement('send-button').addEventListener('click', sendMessage);
