@@ -196,8 +196,6 @@ const TYPING_SPEED = 1;
 // State management
 let conversationHistory = [];
 let isTyping = false;
-let messageCount = 0;
-let isWaiting = false;
 
 // Utility functions
 function sanitizeHTML(str) {
@@ -309,11 +307,6 @@ async function fetchAIResponse(messages) {
 
 // Main message handling
 async function sendMessage() {
-    if (isWaiting) {
-        alert("Please wait for 30 seconds before sending another message.");
-        return;
-    }
-
     const messageInput = getElement('user-message');
     const userMessage = messageInput.value.trim();
 
@@ -333,16 +326,6 @@ async function sendMessage() {
 
     // Update conversation history
     conversationHistory.push({ role: 'user', content: userMessage });
-
-    // Track message count and set waiting period after 5 messages
-    messageCount++;
-    if (messageCount >= 99) {
-        isWaiting = true;
-        setTimeout(() => {
-            isWaiting = false;
-            messageCount = 0;
-        }, 30000); // 30 seconds wait
-    }
 
     try {
         // Adjust token limit dynamically based on message length
