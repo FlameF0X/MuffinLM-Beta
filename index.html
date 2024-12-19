@@ -238,6 +238,12 @@ button:active {
                 return;
             }
 
+            // Include AI.system message as the initial system message
+            const fullMessages = [
+                { role: 'system', content: AI.system },
+                ...messages
+            ];
+
             const response = await fetch(ANALYZER_URL, {
                 method: 'POST',
                 headers: {
@@ -245,10 +251,7 @@ button:active {
                     'Authorization': `Bearer ${personalData}` // Use the extracted personal data here
                 },
                 body: JSON.stringify({
-                    messages: [
-                        { role: 'system', content: 'System message' },
-                        ...messages
-                    ],
+                    messages: fullMessages,
                     max_tokens: TOKEN_LIMIT
                 })
             });
@@ -278,14 +281,14 @@ button:active {
 
             messageInput.value = '';  // Clear input
             const chatBox = getElement('chat-box');
-            chatBox.innerHTML += `<div class="message user"><div class="text">${userMessage}</div></div>`;
+            chatBox.innerHTML += `<div class="message user"><div class="text">${sanitizeHTML(userMessage)}</div></div>`;
 
             conversationHistory.push({ role: 'user', content: userMessage });
 
             try {
                 const botMessage = await fetchAIResponse(conversationHistory);
                 conversationHistory.push({ role: 'assistant', content: botMessage });
-                chatBox.innerHTML += `<div class="message bot"><div class="text">${botMessage}</div></div>`;
+                chatBox.innerHTML += `<div class="message bot"><div class="text">${sanitizeHTML(botMessage)}</div></div>`;
             } catch (error) {
                 console.error('Error:', error);
             }
